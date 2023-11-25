@@ -186,6 +186,7 @@ class register(APIView):
         
         except Exception as e:
             print(e)
+            return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
 
@@ -235,6 +236,7 @@ class VerifyOTP(APIView):
 
         except Exception as e:
             print(e)    
+            return JsonResponse({'error': 'Internal server error'}, status=500)
 
 #Api which will be called when user will click on forgot password. sending mail to user having password reset link
 class PasswordResetRequest(APIView):
