@@ -1,9 +1,9 @@
 
-
+from django.http import JsonResponse
 """ @api_view(['POST'])
 def custom_logout(request):
     auth_logout(request)
-    return Response({'message': 'Logout successful'}) """
+    return JsonResponse({'message': 'Logout successful'}) """
 
  
 
@@ -22,12 +22,12 @@ class dataeditor(APIView):
             serializers=dataeditorserializer(data=data)
             if serializers.is_valid():
                 serializers.save()
-                return Response({
+                return JsonResponse({
                     'status':200,
                     'message':'data created',
                     'data':serializers.data,
                 })
-            return Response({
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -44,12 +44,12 @@ class facultyeditor(APIView):
             serializers=facultyeditorserializer(data=data)
             if serializers.is_valid():
                 serializers.save()
-                return Response({
+                return JsonResponse({
                     'status':200,
                     'message':'data created',
                     'data':serializers.data,
                 }) 
-            return Response({
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -62,7 +62,7 @@ class subjecteditor(APIView):
         try:
             data=request.data
             if data=={}:
-                return Response({
+                return JsonResponse({
                     'status':400,
                     'message':'something went wrong',
                     'data':'data not found',
@@ -70,12 +70,12 @@ class subjecteditor(APIView):
             serializers=subjecteditorserializer(data=data)
             if serializers.is_valid():
                 serializers.save()
-                return Response({
+                return JsonResponse({
                     'status':200,
                     'message':'data created',
                     'data':serializers.data,
                 })
-            return Response({
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -90,7 +90,7 @@ class attendanceeditor(APIView):
         try:
             data=request.data
             if data=={}:
-                return Response({
+                return JsonResponse({
                     'status':400,
                     'message':'something went wrong',
                     'data':'data not found',
@@ -99,12 +99,12 @@ class attendanceeditor(APIView):
             if serializers.is_valid():
                 serializers.save()
                 
-                return Response({
+                return JsonResponse({
                     'status':200,
                     'message':'data created',
                     'data':serializers.data,
                 })
-            return Response({
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -118,7 +118,7 @@ class classassignview(APIView):
         try:
             data=request.data
             if data=={}:
-                return Response({
+                return JsonResponse({
                     'status':400,
                     'message':'something went wrong',
                     'data':'data not found',
@@ -127,13 +127,13 @@ class classassignview(APIView):
             if serializers.is_valid():
                 serializers.save()
                 
-                return Response({
+                return JsonResponse({
                     'status':200,
                     'message':'data created',
                     'data':serializers.data,
                 })
             else:
-                return Response({
+                return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -142,7 +142,7 @@ class classassignview(APIView):
         
         except Exception as e:
             print(e)
-            return Response({
+            return JsonResponse({
                 'status': 500,
                 'message': 'Internal Server Error',
                 'data': str(e),
@@ -164,7 +164,7 @@ class register(APIView):
                 if not student:
                     faculty = Faculty.objects.filter(user_id=user_id).first()
                     if not faculty:
-                        return Response({'error': 'User not found'}, status=404)
+                        return JsonResponse({'error': 'User not found'}, status=404)
                     user = faculty
                 else:
                     user = student
@@ -172,13 +172,13 @@ class register(APIView):
                 if user.password == password:
                     email=user.email
                     send_otp_via_email(email,user_id,password)
-                    return Response({'message': 'OTP sent to email'})
+                    return JsonResponse({'message': 'OTP sent to email'})
 
                 else:
-                    return Response({'error': 'Invalid credentials'}, status=401)    
+                    return JsonResponse({'error': 'Invalid credentials'}, status=401)    
     
 
-            return Response({
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -210,7 +210,7 @@ class VerifyOTP(APIView):
                     if not student:
                         faculty = Faculty.objects.filter(email=email).first()
                         if not faculty:
-                            return Response({'error': 'User not found'}, status=404)
+                            return JsonResponse({'error': 'User not found'}, status=404)
                         user_ = faculty
                     else:
                         user_ = student
@@ -222,12 +222,12 @@ class VerifyOTP(APIView):
                     user.delete()
 
                     #cokkie setting
-                    response = Response({'user_id': user_id, 'otp_sent': True, 'token': token}, status=200)
+                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token}, status=200)
                     response.set_cookie('jwt_token', token, httponly=True, secure=True)  # Use secure=True in production with HTTPS
                     return response
                 else:
-                    return Response({'error': 'Invalid OTP'}, status=401)
-            return Response({
+                    return JsonResponse({'error': 'Invalid OTP'}, status=401)
+            return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
                 'data':serializers.errors,
@@ -250,20 +250,20 @@ class PasswordResetRequest(APIView):
                 faculty_user = Faculty.objects.filter(email=email).first()
 
                 if not student_user and not faculty_user:
-                    return Response({'error': 'User not found: unauthorized email'}, status=404)
+                    return JsonResponse({'error': 'User not found: unauthorized email'}, status=404)
 
                 # Assuming you have a function to send password reset mail
                 print(email)
                 send_passwordreset_mail(email)
 
-                return Response({'message': 'Password reset link sent to email'})
+                return JsonResponse({'message': 'Password reset link sent to email'})
 
-            return Response({'error': 'Invalid data'}, status=400)
+            return JsonResponse({'error': 'Invalid data'}, status=400)
 
         except Exception as e:
             print(e)
             # Handle other exceptions as needed
-            return Response({'error': 'Internal Server Error'}, status=500)    
+            return JsonResponse({'error': 'Internal Server Error'}, status=500)    
 
 
 #taking new password from user and updating it in database.
@@ -277,21 +277,21 @@ class PasswordReset(APIView):
                 #token= request.query_params.get('token', None)
         
                 if token is None:
-                    return Response({'error': 'token is required'}, status=400)      # Handle the case where 'email' is not provided
+                    return JsonResponse({'error': 'token is required'}, status=400)      # Handle the case where 'email' is not provided
                 
                 # Check if the token has already been used
                 if used_tokens.get(token):
-                    return Response({'error': 'Token has already been used'}, status=400)
+                    return JsonResponse({'error': 'Token has already been used'}, status=400)
                 
                 email=decode_jwt_token_reset(token)
             
                 if email is None:
-                    return Response({'error': 'Invalid token'}, status=401)
+                    return JsonResponse({'error': 'Invalid token'}, status=401)
                 student=Student.objects.filter(email=email).first()
                 if student is None:
                     faculty=Faculty.objects.filter(email=email).first()
                     if faculty is None:
-                        return Response({'error': 'User not found'}, status=404)
+                        return JsonResponse({'error': 'User not found'}, status=404)
                     user=faculty
                 else:
                     user=student
@@ -302,15 +302,15 @@ class PasswordReset(APIView):
                     confirm_password= serializers.validated_data.get('confirm_password')
 
                     if password != confirm_password:
-                        return Response({'error': 'Passwords do not match'}, status=400)
+                        return JsonResponse({'error': 'Passwords do not match'}, status=400)
                     user.password=password
                     user.save()
                     #once token used setting it true
                     used_tokens[token] = True
                     
-                    return Response({'message': 'Password reset successful'})
+                    return JsonResponse({'message': 'Password reset successful'})
                 else:
-                    return Response(serializers.errors,status=400)    
+                    return JsonResponse(serializers.errors,status=400)    
                 
 
 #API when click on attendace button          
@@ -385,7 +385,7 @@ def Attendanceview(request):
 
                 #getting toatal attendace and absent    
             
-                return Response({"message":"success",
+                return JsonResponse({"message":"success",
                                  "name":name,
                                  "semester":semester,
                                  "section":section,
@@ -397,9 +397,9 @@ def Attendanceview(request):
                                 "data":data}) 
                 
             except jwt.ExpiredSignatureError:  
-                return Response({'error': 'Token expired'}, status=401)
+                return JsonResponse({'error': 'Token expired'}, status=401)
     else:
-            return Response({'error': 'Invalid token'}, status=401) 
+            return JsonResponse({'error': 'Invalid token'}, status=401) 
 
 
 
