@@ -16,7 +16,7 @@ def send_otp_via_email(email,user_id,password):
 def send_passwordreset_mail(email):
     subject="password reset"
     token=generate_jwt_token_reset(email)
-    reset_url = f"http://127.0.0.1:8000/api/password/reset/{token}/" 
+    reset_url = f"https://erp-backend-mqly.onrender.com/api/password/reset/{token}/" 
     message=f'your password reset link is {reset_url}'
     email_from=settings.EMAIL_HOST_USER
     send_mail(subject,message,email_from,[email])
