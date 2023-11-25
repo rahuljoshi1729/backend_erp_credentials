@@ -1,5 +1,6 @@
 
 from django.http import JsonResponse
+from django.http import HttpResponse
 """ @api_view(['POST'])
 def custom_logout(request):
     auth_logout(request)
@@ -172,7 +173,7 @@ class register(APIView):
                 if user.password == password:
                     email=user.email
                     send_otp_via_email(email,user_id,password)
-                    return JsonResponse({'message': 'OTP sent to email'})
+                    return HttpResponse({'message': 'OTP sent to email'},status=200)
 
                 else:
                     return JsonResponse({'error': 'Invalid credentials'}, status=401)    
