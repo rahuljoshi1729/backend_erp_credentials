@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 
 
@@ -51,7 +51,7 @@ class Student(models.Model):
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     admission_date=models.DateField(auto_now_add=True,blank=True,null=True)
-    email=models.EmailField(unique=True)
+    email=models.EmailField(unique=True,validators=[RegexValidator(regex=r'.*akgec\.ac\.in$', message='Email must end with akgec.ac.in')])
     aadhar=models.CharField(max_length=12,blank=True,null=True)
     address=models.TextField(blank=True,null=True)
     phone_number=models.IntegerField(unique=True)
@@ -75,7 +75,7 @@ class Faculty(models.Model):
     password=models.CharField(max_length=100,default='1234')
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
-    email=models.EmailField(unique=True)
+    email=models.EmailField(unique=True,validators=[RegexValidator(regex=r'.*akgec\.ac\.in$', message='Email must end with akgec.ac.in')])
     phone_number=models.IntegerField(unique=True)
     profile_photo_url=models.URLField()
     role=models.CharField(max_length=100,default='faculty')

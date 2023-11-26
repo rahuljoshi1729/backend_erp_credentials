@@ -1,41 +1,76 @@
-
-from django.http import JsonResponse
-from django.http import HttpResponse
 """ @api_view(['POST'])
 def custom_logout(request):
     auth_logout(request)
     return JsonResponse({'message': 'Logout successful'}) """
 
- 
-
+from django.http import JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
 from .models import *
-from .emails import send_otp_via_email,generate_jwt_token,send_passwordreset_mail,decode_jwt_token_reset,decode_jwt_token,getdatafromjwt
+from .emails import send_otp_via_email,generate_jwt_token,send_passwordreset_mail,decode_jwt_token_reset,decode_jwt_token
+import jwt
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
-class dataeditor(APIView):
-    def post(self,request):
+@csrf_exempt
+def get_jwt_token_from_cookies(request):
+    jwt_token = request.COOKIES.get('jwt_token')
+    if jwt_token:
         try:
-            data=request.data
-            serializers=dataeditorserializer(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                return JsonResponse({
-                    'status':200,
-                    'message':'data created',
-                    'data':serializers.data,
-                })
-            return JsonResponse({
-                'status':400,
-                'message':'something went wrong',
-                'data':serializers.errors,
-            })   
+            # Decode and verify the JWT token
+            user_id, role = decode_jwt_token(jwt_token)
+            return user_id, role
+        except jwt.ExpiredSignatureError:
+            # Handle token expiration
+            return JsonResponse({'error': 'Token expired'}, status=401)
+        except jwt.InvalidTokenError:
+            # Handle invalid token
+            return JsonResponse({'error': 'Invalid token'}, status=401)
+    return None
+
+
+
+class studentdataeditor(APIView):
+    @csrf_exempt  # You may not need this decorator depending on your project settings
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
         
-        except Exception as e:
-            print(e)
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'faculty':
+                    data = request.data
+                    serializers = DataEditorSerializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 200,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
+        
 
 #API to take faculty data
 class facultyeditor(APIView):
@@ -56,7 +91,8 @@ class facultyeditor(APIView):
                 'data':serializers.errors,
             })  
         except Exception as e:
-            print(e)         
+            print(e)  
+            return JsonResponse({'error': 'Internal server error'}, status=500)       
 
 class subjecteditor(APIView):
     def post(self,request):
@@ -84,6 +120,7 @@ class subjecteditor(APIView):
         
         except Exception as e:
             print(e)
+            return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
 class attendanceeditor(APIView):
@@ -113,6 +150,7 @@ class attendanceeditor(APIView):
         
         except Exception as e:
             print(e)
+            return JsonResponse({'error': 'Internal server error'}, status=500)
 
 class classassignview(APIView):
     def post(self,request):
@@ -325,7 +363,7 @@ from rest_framework.decorators import api_view
 @csrf_exempt
 def Attendanceview(request):
     jwt_token = request.COOKIES.get('jwt_token')
-    print(jwt_token)
+    #print(jwt_token)
     if jwt_token:
             try:
         
@@ -352,7 +390,7 @@ def Attendanceview(request):
                         subfaculdic[key]=facultyuser.first_name+" "+facultyuser.last_name
                     else:
                         subfaculdic[key]="Not Assigned"    
-                print(subfaculdic) 
+               # print(subfaculdic) 
                 data = {}
                 total_classes=0
                 present=0
@@ -363,7 +401,7 @@ def Attendanceview(request):
                     faculty_name = subfaculdic[key]
                     temp.append(subcodedic[key])
                     temp.append(faculty_name)
-                    print(data)
+                   # print(data)
                     attendance_user_list = list(attendance_user)
                     #print(attendance_user_list)
                     temps=[]
@@ -379,7 +417,7 @@ def Attendanceview(request):
                         if is_present_value==1:
                             present+=1
                        # print(date_value, is_present_value)
-                        print(total_classes,present)
+                       # print(total_classes,present)
                         temps.append(tempi)
                     data[str(tuple(temp))]=temps
                 print(data)   
@@ -397,7 +435,7 @@ def Attendanceview(request):
                                 "total_classes":total_classes,
                                 "present":present,
                                 "absent":total_classes-present,
-                                "data":data}) 
+                                "data":data},status=200) 
                 
             except jwt.ExpiredSignatureError:  
                 return JsonResponse({'error': 'Token expired'}, status=401)
