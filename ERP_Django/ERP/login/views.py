@@ -44,14 +44,14 @@ class studentdataeditor(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'student':
+                if role == 'faculty':
                     data = request.data
                     serializers = dataeditorserializer(data=data)
 
                     if serializers.is_valid():
                         serializers.save()
                         return Response({
-                            'status': 200,
+                            'status': 201,
                             'message': 'Data created',
                             'data': serializers.data,
                         })
@@ -90,7 +90,7 @@ class facultyeditor(APIView):
                     if serializers.is_valid():
                         serializers.save()
                         return Response({
-                            'status': 200,
+                            'status': 201,
                             'message': 'Data created',
                             'data': serializers.data,
                         })
@@ -128,7 +128,7 @@ class subjecteditor(APIView):
                     if serializers.is_valid():
                         serializers.save()
                         return Response({
-                            'status': 200,
+                            'status': 201,
                             'message': 'Data created',
                             'data': serializers.data,
                         })
@@ -166,7 +166,7 @@ class attendanceeditor(APIView):
                     if serializers.is_valid():
                         serializers.save()
                         return Response({
-                            'status': 200,
+                            'status': 201,
                             'message': 'Data created',
                             'data': serializers.data,
                         })
@@ -205,7 +205,7 @@ class classassignview(APIView):
                     if serializers.is_valid():
                         serializers.save()
                         return Response({
-                            'status': 200,
+                            'status': 201,
                             'message': 'Data created',
                             'data': serializers.data,
                         })
@@ -250,7 +250,7 @@ class register(APIView):
                 if user.password == password:
                     email=user.email
                     send_otp_via_email(email,user_id,password)
-                    return HttpResponse({'message': 'OTP sent to email'},status=200)
+                    return HttpResponse({'message': 'OTP sent to email'},status=201)
 
                 else:
                     return JsonResponse({'error': 'Invalid credentials'}, status=401)    
@@ -301,7 +301,7 @@ class VerifyOTP(APIView):
                     user.delete()
 
                     #cokkie setting
-                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token}, status=200)
+                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token}, status=201)
                     response.set_cookie('jwt_token', token, httponly=True, secure=True)  # Use secure=True in production with HTTPS
                     return response
                 else:
@@ -336,7 +336,7 @@ class PasswordResetRequest(APIView):
                 print(email)
                 send_passwordreset_mail(email)
 
-                return JsonResponse({'message': 'Password reset link sent to email'},statu)
+                return JsonResponse({'message': 'Password reset link sent to email'},status=201)
 
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
@@ -474,7 +474,7 @@ def Attendanceview(request):
                                 "total_classes":total_classes,
                                 "present":present,
                                 "absent":total_classes-present,
-                                "data":data},status=200) 
+                                "data":data},status=201) 
                 
             except jwt.ExpiredSignatureError:  
                 return JsonResponse({'error': 'Token expired'}, status=401)
