@@ -478,7 +478,7 @@ from django.views.decorators.csrf import csrf_exempt
 import jwt
 from rest_framework.decorators import api_view
 
-""" @api_view(['POST'])
+@api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
     jwt_token = request.COOKIES.get('jwt_token')
@@ -561,11 +561,11 @@ def Attendanceview(request):
             except jwt.ExpiredSignatureError:  
                 return JsonResponse({'error': 'Token expired','status':401}, status=401)
     else:
-            return JsonResponse({'error': 'Invalid token','status':401}, status=401)  """
+            return JsonResponse({'error': 'Invalid token','status':401}, status=401)  
             
             
             
-@api_view(['POST'])
+""" @api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
     jwt_token = request.headers.get('token')
@@ -628,7 +628,7 @@ def Attendanceview(request):
                         temps.append(tempi)
                     data[str(tuple(temp))]=temps
                 print(data)   
-
+ 
 
 
                 #getting toatal attendace and absent    
@@ -649,13 +649,14 @@ def Attendanceview(request):
                 return JsonResponse({'error': 'Token expired','status':401}, status=401)
     else:
             return JsonResponse({'error': 'Invalid token','status':401}, status=401)             
-
-""" @api_view(['GET'])
+"""
+@api_view(['GET'])
 def get_examdata(request):
-    dummy_data = DummyModel.objects.all()
-    serializer = DummyModelSerializer(dummy_data, many=True)
-    return Response(serializer.data) """
+    exam_data = exam.objects.all()
+    serializer = givingexamdataserializer(exam_data, many=True)
+    return Response(serializer.data)
+
     
     
     
-token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkI…2OTV9.mkiestOh_BJAB0lRCvBWZiIh9oGia-FNBMwupl46h-o'    
+  

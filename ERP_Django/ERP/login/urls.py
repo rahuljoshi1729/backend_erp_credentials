@@ -11,6 +11,7 @@ urlpatterns = [
     path('exameditor/',examdataeditiorview.as_view(),name='exam_data'),
     path('examdataadmitresult/',examdataadmitresulteditiorview.as_view(),name='exam_data'),
     path('classassign/',classassignview.as_view(),name='classassign'),
+    path('examdata/',get_examdata,name='exam_data'),
     path("verifyotp/",VerifyOTP.as_view(),name="verifyotp"),
     path("passwordreset/",PasswordResetRequest.as_view(),name="passwordresetrequest"),
     path("password/reset/<str:token>/",PasswordReset.as_view(),name="passwordreset"),
