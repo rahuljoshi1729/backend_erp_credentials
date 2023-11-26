@@ -62,13 +62,13 @@ class studentdataeditor(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404})
 
             except jwt.ExpiredSignatureError:
-                return JsonResponse({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return JsonResponse({'error': 'Token expired','status':401})  # Handle token expiration
 
         else:
-            return JsonResponse({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error            
+            return JsonResponse({'error': 'Invalid token','status':401})  # Handle invalid token check for above error            
          
 
 #API to take faculty data
@@ -101,13 +101,13 @@ class facultyeditor(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404})
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired','status':401})  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error      
+            return Response({'error': 'Invalid token','status':401})  # Handle invalid token check for above error      
 
 #API to add subject
 class subjecteditor(APIView):
@@ -139,13 +139,13 @@ class subjecteditor(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404}, status=404)
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired','status':401}, status=401)  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error 
+            return Response({'error': 'Invalid token','status':401}, status=401)  # Handle invalid token check for above error 
 
 
 class attendanceeditor(APIView):
@@ -177,13 +177,13 @@ class attendanceeditor(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed","status":404}, status=404)
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired',"status":401}, status=401)  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error 
+            return Response({'error': 'Invalid token',"status":401}, status=401)  # Handle invalid token check for above error 
         
         
 
@@ -216,13 +216,13 @@ class classassignview(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404}, status=404)
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired','status':401}, status=401)  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
+            return Response({'error': 'Invalid token','status':401}, status=401)  # Handle invalid token check for above error
         
         
 #API FOR ADDING  EXAMS DATA 
@@ -255,13 +255,13 @@ class examdataeditiorview(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404,'status':401}, status=404)
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired','status':401}, status=401)  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
+            return Response({'error': 'Invalid token','status':401}, status=401)  # Handle invalid token check for above error
         
 #API FOR ADDING  EXAMS DATA ADMIT CARD AND RESULT FOR A PARTICULAR USER
 class examdataadmitresulteditiorview(APIView):
@@ -293,13 +293,13 @@ class examdataadmitresulteditiorview(APIView):
                         'data': serializers.errors,
                     })
                 else:
-                    return JsonResponse({"message": "Access not allowed"}, status=404)
+                    return JsonResponse({"message": "Access not allowed",'status':404}, status=404)
 
             except jwt.ExpiredSignatureError:
-                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+                return Response({'error': 'Token expired','status':401}, status=401)  # Handle token expiration
 
         else:
-            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error        
+            return Response({'error': 'Invalid token','status':401}, status=401)  # Handle invalid token check for above error        
         
         
              
@@ -320,7 +320,7 @@ class register(APIView):
                 if not student:
                     faculty = Faculty.objects.filter(user_id=user_id).first()
                     if not faculty:
-                        return JsonResponse({'error': 'User not found'}, status=404)
+                        return JsonResponse({'error': 'User not found','status':404}, status=404)
                     user = faculty
                 else:
                     user = student
@@ -328,10 +328,10 @@ class register(APIView):
                 if user.password == password:
                     email=user.email
                     send_otp_via_email(email,user_id,password)
-                    return HttpResponse({'message': 'OTP sent to email'},status=201)
+                    return HttpResponse({'message': 'OTP sent to email','status':201},status=201)
 
                 else:
-                    return JsonResponse({'error': 'Invalid credentials'}, status=401)    
+                    return JsonResponse({'error': 'Invalid credentials','status':401}, status=401)    
     
 
             return JsonResponse({
@@ -342,7 +342,7 @@ class register(APIView):
         
         except Exception as e:
             print(e)
-            return JsonResponse({'error': 'Internal server error'}, status=500)
+            return JsonResponse({'error': 'Internal server error','status':500}, status=500)
 
 
 
@@ -367,7 +367,7 @@ class VerifyOTP(APIView):
                     if not student:
                         faculty = Faculty.objects.filter(email=email).first()
                         if not faculty:
-                            return JsonResponse({'error': 'User not found'}, status=404)
+                            return JsonResponse({'error': 'User not found','status':404})
                         user_ = faculty
                     else:
                         user_ = student
@@ -379,11 +379,11 @@ class VerifyOTP(APIView):
                     user.delete()
 
                     #cokkie setting
-                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token}, status=201)
+                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token,'status':201})
                     response.set_cookie('jwt_token', token, httponly=True, secure=True)  # Use secure=True in production with HTTPS
                     return response
                 else:
-                    return JsonResponse({'error': 'Invalid OTP'}, status=401)
+                    return JsonResponse({'error': 'Invalid OTP','status':401}, status=401)
             return JsonResponse({
                 'status':400,
                 'message':'something went wrong',
@@ -392,7 +392,7 @@ class VerifyOTP(APIView):
 
         except Exception as e:
             print(e)    
-            return JsonResponse({'error': 'Internal server error'}, status=500)
+            return JsonResponse({'error': 'Internal server error','status':500}, status=500)
 
 #Api which will be called when user will click on forgot password. sending mail to user having password reset link
 class PasswordResetRequest(APIView):
@@ -408,21 +408,21 @@ class PasswordResetRequest(APIView):
                 faculty_user = Faculty.objects.filter(email=email).first()
 
                 if not student_user and not faculty_user:
-                    return JsonResponse({'error': 'User not found: unauthorized email'}, status=404)
+                    return JsonResponse({'error': 'User not found: unauthorized email','status':404}, status=404)
 
                 # Assuming you have a function to send password reset mail
                 print(email)
                 token=send_passwordreset_mail(email)
 
                 return JsonResponse({'message': 'Password reset link sent to email',
-                                     'token':token},status=201)
+                                     'token':token,'status':201},status=201)
 
-            return JsonResponse({'error': 'Invalid data'}, status=400)
+            return JsonResponse({'error': 'Invalid data','status':400}, status=400)
 
         except Exception as e:
             print(e)
             # Handle other exceptions as needed
-            return JsonResponse({'error': 'Internal Server Error'}, status=500)    
+            return JsonResponse({'error': 'Internal Server Error','status':500}, status=500)    
 
 
 #taking new password from user and updating it in database.
@@ -436,22 +436,22 @@ class PasswordReset(APIView):
                 token=request.headers.get('token')
         
                 if token is None:
-                    return JsonResponse({'error': 'token is required'}, status=400)      # Handle the case where 'email' is not provided
+                    return JsonResponse({'error': 'token is required','status':400}, status=400)      # Handle the case where 'email' is not provided
                 
                 # Check if the token has already been used
                 if used_tokens.get(token):
-                    return JsonResponse({'error': 'Token has already been used'}, status=400)
+                    return JsonResponse({'error': 'Token has already been used','status':400}, status=400)
                 
                 email=decode_jwt_token_reset(token)
                 print(email)
             
                 if email is None:
-                    return JsonResponse({'error': 'Invalid token'}, status=401)
+                    return JsonResponse({'error': 'Invalid token','status':401}, status=401)
                 student=Student.objects.filter(email=email).first()
                 if student is None:
                     faculty=Faculty.objects.filter(email=email).first()
                     if faculty is None:
-                        return JsonResponse({'error': 'User not found'}, status=404)
+                        return JsonResponse({'error': 'User not found','status':404}, status=404)
                     user=faculty
                 else:
                     user=student
@@ -462,13 +462,13 @@ class PasswordReset(APIView):
                     confirm_password= serializers.validated_data.get('confirm_password')
 
                     if password != confirm_password:
-                        return JsonResponse({'error': 'Passwords do not match'}, status=400)
+                        return JsonResponse({'error': 'Passwords do not match','status':400}, status=400)
                     user.password=password
                     user.save()
                     #once token used setting it true
                     used_tokens[token] = True
                     
-                    return JsonResponse({'message': 'Password reset successful'})
+                    return JsonResponse({'message': 'Password reset successful','status':201})
                 else:
                     return JsonResponse(serializers.errors,status=400)    
                 
@@ -555,12 +555,13 @@ def Attendanceview(request):
                                 "total_classes":total_classes,
                                 "present":present,
                                 "absent":total_classes-present,
-                                "data":data},status=201) 
+                                "data":data,
+                                "status":201},status=201) 
                 
             except jwt.ExpiredSignatureError:  
-                return JsonResponse({'error': 'Token expired'}, status=401)
+                return JsonResponse({'error': 'Token expired','status':401}, status=401)
     else:
-            return JsonResponse({'error': 'Invalid token'}, status=401) 
+            return JsonResponse({'error': 'Invalid token','status':401}, status=401) 
 
 """ @api_view(['GET'])
 def get_examdata(request):

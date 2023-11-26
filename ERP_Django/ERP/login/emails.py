@@ -16,11 +16,7 @@ def send_otp_via_email(email,user_id,password):
 def send_passwordreset_mail(email):
     subject="password reset"
     token=generate_jwt_token_reset(email)
-<<<<<<< HEAD
     reset_url = f"http://localhost:5173/PassConfirm" 
-=======
-    reset_url = f"http://localhost:5173/PassConfirm/{token}/" 
->>>>>>> 137678a6ae86c0ba6af7200a06c43d05061fd114
     message=f'your password reset link is {reset_url}'
     email_from=settings.EMAIL_HOST_USER
     send_mail(subject,message,email_from,[email])
@@ -71,6 +67,11 @@ def decode_jwt_token(token):
         # Invalid token
         return None, None
     
+token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMjE1NDAzMCwicm9sZSI6InN0dWRlbnQiLCJleHAiOjE3MDEwODg2NzB9.izIdilLfox3y8JbRGYRtj7VAQrEuEWerWLj98RF1wTc' 
+user_id,role=decode_jwt_token(token)
+print(user_id,role) 
+  
+
 #for password reset
 def decode_jwt_token_reset(token):
     try:
