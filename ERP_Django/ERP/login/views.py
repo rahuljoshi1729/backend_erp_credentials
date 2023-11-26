@@ -568,8 +568,8 @@ def Attendanceview(request):
 @api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
-    print(request)
-    print(request)
+    print(request.headers)
+    print(request.headers)
     jwt_token = request.headers.get('token')
     print(jwt_token)
     if jwt_token:
