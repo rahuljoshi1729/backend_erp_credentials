@@ -478,7 +478,7 @@ from django.views.decorators.csrf import csrf_exempt
 import jwt
 from rest_framework.decorators import api_view
 
-@api_view(['POST'])
+""" @api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
     jwt_token = request.COOKIES.get('jwt_token')
@@ -561,10 +561,101 @@ def Attendanceview(request):
             except jwt.ExpiredSignatureError:  
                 return JsonResponse({'error': 'Token expired','status':401}, status=401)
     else:
-            return JsonResponse({'error': 'Invalid token','status':401}, status=401) 
+            return JsonResponse({'error': 'Invalid token','status':401}, status=401)  """
+            
+            
+            
+@api_view(['POST'])
+@csrf_exempt
+def Attendanceview(request):
+    jwt_token = request.headers.get('token')
+    print(jwt_token)
+    if jwt_token:
+            try:
+        
+                user_id, role = decode_jwt_token(jwt_token)
+                print(user_id, role)
+                #getting data of student
+                Studentuser=Student.objects.get(user_id=user_id)
+                semester=Studentuser.semester
+                section=Studentuser.section
+                name=Studentuser.first_name+" "+Studentuser.last_name
+                #getting data of student
+                subjectuser=Subjects.objects.filter(semester=semester)
+                subjectuserlist=list(subjectuser)
+                subcodedic={}
+                for a in subjectuserlist:
+                    subcodedic[a.code]=a.name
+                print(subcodedic)
+                #now getting the faculty who is taking that subject
+                subfaculdic={}
+                for key in subcodedic:
+                    classassigneduser=classassigned.objects.get(subject_code=key,class_assigned=section,semester=semester)
+                    facultyuser=Faculty.objects.get(user_id=classassigneduser.faculty)
+                    if classassigneduser:
+                        faculty=classassigneduser.faculty
+                        subfaculdic[key]=facultyuser.first_name+" "+facultyuser.last_name
+                    else:
+                        subfaculdic[key]="Not Assigned"    
+                print(subfaculdic) 
+                data = {}
+                total_classes=0
+                present=0
+                for key in subcodedic:
+                    temp=[]
+                    #print(key)
+                    attendance_user = Attendance.objects.filter(student_id=user_id, subject=key)
+                    faculty_name = subfaculdic[key]
+                    temp.append(subcodedic[key])
+                    temp.append(faculty_name)
+                   # print(data)
+                    attendance_user_list = list(attendance_user)
+                    #print(attendance_user_list)
+                    temps=[]
+                   
+                    for a in attendance_user_list:
+                        tempi=[]
+                        #print(a)
+                        date_value = str(a.date)
+                        is_present_value = a.is_present
+                        tempi.append(date_value)
+                        tempi.append(is_present_value)
+                        total_classes+=1
+                        if is_present_value==1:
+                            present+=1
+                       # print(date_value, is_present_value)
+                       # print(total_classes,present)
+                        temps.append(tempi)
+                    data[str(tuple(temp))]=temps
+                print(data)   
+
+
+
+                #getting toatal attendace and absent    
+            
+                return JsonResponse({"message":"success",
+                                 "name":name,
+                                 "semester":semester,
+                                 "section":section,
+                                "user_id":user_id,
+                                "role":role,
+                                "total_classes":total_classes,
+                                "present":present,
+                                "absent":total_classes-present,
+                                "data":data,
+                                "status":201},status=201) 
+                
+            except jwt.ExpiredSignatureError:  
+                return JsonResponse({'error': 'Token expired','status':401}, status=401)
+    else:
+            return JsonResponse({'error': 'Invalid token','status':401}, status=401)             
 
 """ @api_view(['GET'])
 def get_examdata(request):
     dummy_data = DummyModel.objects.all()
     serializer = DummyModelSerializer(dummy_data, many=True)
     return Response(serializer.data) """
+    
+    
+    
+token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkI…2OTV9.mkiestOh_BJAB0lRCvBWZiIh9oGia-FNBMwupl46h-o'    
