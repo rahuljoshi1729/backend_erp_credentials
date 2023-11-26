@@ -33,9 +33,85 @@ def get_jwt_token_from_cookies(request):
     return None
 
 
-
 class studentdataeditor(APIView):
-    @csrf_exempt  # You may not need this decorator depending on your project settings
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
+        
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'student':
+                    data = request.data
+                    serializers = dataeditorserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 200,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return JsonResponse({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return JsonResponse({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error            
+         
+
+#API to take faculty data
+class facultyeditor(APIView):
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token) 
+        
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'admin':
+                    data = request.data
+                    serializers = facultyeditorserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 200,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error      
+
+#API to add subject
+class subjecteditor(APIView):
+    @csrf_exempt  
     def post(self, request):
         jwt_token = request.COOKIES.get('jwt_token')
         print(jwt_token)
@@ -47,7 +123,84 @@ class studentdataeditor(APIView):
                 
                 if role == 'faculty':
                     data = request.data
-                    serializers = DataEditorSerializer(data=data)
+                    serializers = subjecteditorserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 200,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error 
+
+
+class attendanceeditor(APIView):
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
+        
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'faculty':
+                    data = request.data
+                    serializers = attendenceeditorserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 200,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error 
+        
+        
+
+class classassignview(APIView):
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
+        
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'faculty':
+                    data = request.data
+                    serializers = classassignserializer(data=data)
 
                     if serializers.is_valid():
                         serializers.save()
@@ -71,122 +224,8 @@ class studentdataeditor(APIView):
         else:
             return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
         
-
-#API to take faculty data
-class facultyeditor(APIView):
-    def post(self,request):
-        try:
-            data=request.data
-            serializers=facultyeditorserializer(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                return JsonResponse({
-                    'status':200,
-                    'message':'data created',
-                    'data':serializers.data,
-                }) 
-            return JsonResponse({
-                'status':400,
-                'message':'something went wrong',
-                'data':serializers.errors,
-            })  
-        except Exception as e:
-            print(e)  
-            return JsonResponse({'error': 'Internal server error'}, status=500)       
-
-class subjecteditor(APIView):
-    def post(self,request):
-        try:
-            data=request.data
-            if data=={}:
-                return JsonResponse({
-                    'status':400,
-                    'message':'something went wrong',
-                    'data':'data not found',
-                })
-            serializers=subjecteditorserializer(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                return JsonResponse({
-                    'status':200,
-                    'message':'data created',
-                    'data':serializers.data,
-                })
-            return JsonResponse({
-                'status':400,
-                'message':'something went wrong',
-                'data':serializers.errors,
-            })   
         
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': 'Internal server error'}, status=500)
-
-
-class attendanceeditor(APIView):
-    def post(self,request):
-        try:
-            data=request.data
-            if data=={}:
-                return JsonResponse({
-                    'status':400,
-                    'message':'something went wrong',
-                    'data':'data not found',
-                })            
-            serializers=attendenceeditorserializer(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                
-                return JsonResponse({
-                    'status':200,
-                    'message':'data created',
-                    'data':serializers.data,
-                })
-            return JsonResponse({
-                'status':400,
-                'message':'something went wrong',
-                'data':serializers.errors,
-            })   
         
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': 'Internal server error'}, status=500)
-
-class classassignview(APIView):
-    def post(self,request):
-        try:
-            data=request.data
-            if data=={}:
-                return JsonResponse({
-                    'status':400,
-                    'message':'something went wrong',
-                    'data':'data not found',
-                })            
-            serializers=classassignserializer(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                
-                return JsonResponse({
-                    'status':200,
-                    'message':'data created',
-                    'data':serializers.data,
-                })
-            else:
-                return JsonResponse({
-                'status':400,
-                'message':'something went wrong',
-                'data':serializers.errors,
-            })   
-            
-        
-        except Exception as e:
-            print(e)
-            return JsonResponse({
-                'status': 500,
-                'message': 'Internal Server Error',
-                'data': str(e),
-            })
-
 class register(APIView):
     def post(self,request):
         try:
@@ -297,7 +336,7 @@ class PasswordResetRequest(APIView):
                 print(email)
                 send_passwordreset_mail(email)
 
-                return JsonResponse({'message': 'Password reset link sent to email'})
+                return JsonResponse({'message': 'Password reset link sent to email'},statu)
 
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
