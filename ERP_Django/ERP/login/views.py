@@ -198,7 +198,7 @@ class classassignview(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'faculty':
+                if role == 'student':
                     data = request.data
                     serializers = classassignserializer(data=data)
 
@@ -225,7 +225,85 @@ class classassignview(APIView):
             return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
         
         
+#API FOR ADDING  EXAMS DATA 
+class examdataeditiorview(APIView):
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
         
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'student':
+                    data = request.data
+                    serializers = exameditorserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 201,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error
+        
+#API FOR ADDING  EXAMS DATA ADMIT CARD AND RESULT FOR A PARTICULAR USER
+class examdataadmitresulteditiorview(APIView):
+    @csrf_exempt  
+    def post(self, request):
+        jwt_token = request.COOKIES.get('jwt_token')
+        print(jwt_token)
+        
+        if jwt_token:
+            try:
+                user_id, role = decode_jwt_token(jwt_token)
+                # print(user_id, role)
+                
+                if role == 'student':
+                    data = request.data
+                    serializers = ExamDataAdmitResultserializer(data=data)
+
+                    if serializers.is_valid():
+                        serializers.save()
+                        return Response({
+                            'status': 201,
+                            'message': 'Data created',
+                            'data': serializers.data,
+                        })
+
+                    return Response({
+                        'status': 400,
+                        'message': 'Something went wrong',
+                        'data': serializers.errors,
+                    })
+                else:
+                    return JsonResponse({"message": "Access not allowed"}, status=404)
+
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token expired'}, status=401)  # Handle token expiration
+
+        else:
+            return Response({'error': 'Invalid token'}, status=401)  # Handle invalid token check for above error        
+        
+        
+             
+#API FOR LOGIN OF USER       
 class register(APIView):
     def post(self,request):
         try:
@@ -334,9 +412,10 @@ class PasswordResetRequest(APIView):
 
                 # Assuming you have a function to send password reset mail
                 print(email)
-                send_passwordreset_mail(email)
+                token=send_passwordreset_mail(email)
 
-                return JsonResponse({'message': 'Password reset link sent to email'},status=201)
+                return JsonResponse({'message': 'Password reset link sent to email',
+                                     'token':token},status=201)
 
             return JsonResponse({'error': 'Invalid data'}, status=400)
 
@@ -352,9 +431,9 @@ class PasswordResetRequest(APIView):
 used_tokens = {}
 #token is sent in url and new password is taken from user        
 class PasswordReset(APIView):
-            def post(self, request,token):
+            def post(self, request):
                  
-                #token= request.query_params.get('token', None)
+                token=request.headers.get('token')
         
                 if token is None:
                     return JsonResponse({'error': 'token is required'}, status=400)      # Handle the case where 'email' is not provided
@@ -364,6 +443,7 @@ class PasswordReset(APIView):
                     return JsonResponse({'error': 'Token has already been used'}, status=400)
                 
                 email=decode_jwt_token_reset(token)
+                print(email)
             
                 if email is None:
                     return JsonResponse({'error': 'Invalid token'}, status=401)
@@ -402,11 +482,12 @@ from rest_framework.decorators import api_view
 @csrf_exempt
 def Attendanceview(request):
     jwt_token = request.COOKIES.get('jwt_token')
-    #print(jwt_token)
+    print(jwt_token)
     if jwt_token:
             try:
         
                 user_id, role = decode_jwt_token(jwt_token)
+                print(user_id, role)
                 #getting data of student
                 Studentuser=Student.objects.get(user_id=user_id)
                 semester=Studentuser.semester
@@ -418,7 +499,7 @@ def Attendanceview(request):
                 subcodedic={}
                 for a in subjectuserlist:
                     subcodedic[a.code]=a.name
-                #print(subcodedic)
+                print(subcodedic)
                 #now getting the faculty who is taking that subject
                 subfaculdic={}
                 for key in subcodedic:
@@ -429,7 +510,7 @@ def Attendanceview(request):
                         subfaculdic[key]=facultyuser.first_name+" "+facultyuser.last_name
                     else:
                         subfaculdic[key]="Not Assigned"    
-               # print(subfaculdic) 
+                print(subfaculdic) 
                 data = {}
                 total_classes=0
                 present=0
@@ -481,6 +562,8 @@ def Attendanceview(request):
     else:
             return JsonResponse({'error': 'Invalid token'}, status=401) 
 
-
-
-            
+""" @api_view(['GET'])
+def get_examdata(request):
+    dummy_data = DummyModel.objects.all()
+    serializer = DummyModelSerializer(dummy_data, many=True)
+    return Response(serializer.data) """

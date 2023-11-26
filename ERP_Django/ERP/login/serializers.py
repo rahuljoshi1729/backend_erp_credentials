@@ -51,3 +51,26 @@ class classassignserializer(serializers.ModelSerializer):
         model=classassigned
         fields=['subject_code','faculty','semester','class_assigned']        
 
+class exameditorserializer(serializers.ModelSerializer):
+    class Meta:
+        model=exam
+        fields=['exam_name','total_marks','date','duration','session']
+
+
+class ExamDataAdmitResultserializer(serializers.ModelSerializer):
+    class Meta:
+        model=ExamDataAdmitResult
+        fields=['user_id','exam_name','session','result','admit_card']
+        
+        
+#serializer for giving exam data     
+
+class givingexamdataserializer(serializers.ModelSerializer):
+    class Meta:
+        model = exam
+        fields = '__all__'   
+        
+class givingexamadmitresultdataserializer(serializers.ModelSerializer):
+    class Meta:
+        model = exam
+        fields = '__all__'   

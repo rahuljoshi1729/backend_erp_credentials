@@ -136,3 +136,45 @@ class StaffProfile(models.Model):
     aadhar=models.CharField(max_length=12,blank=True,null=True)
     address=models.TextField(blank=True,null=True)
     profile_url=models.URLField(blank=True,null=True)    """ 
+    
+    
+class exam(models.Model):
+    exam_name = models.CharField(max_length=100)
+    total_marks = models.IntegerField()
+    date = models.DateField(blank=True, null=True)  
+    duration = models.PositiveIntegerField(help_text="Duration in minutes", blank=True, null=True)
+
+    # Adding a regex validator for the session field
+    session_validator = RegexValidator(
+        regex=r'^\d{4}-\d{4}$',
+        message='Session must be in the format "YYYY-YYYY"'
+    )
+
+    session = models.CharField(
+        max_length=9,
+        blank=True,
+        null=True,
+        validators=[session_validator]
+    )
+    
+class ExamDataAdmitResult(models.Model):
+    user_id = models.IntegerField()
+    
+    # Adding a regex validator for the session field
+    session_validator = RegexValidator(
+        regex=r'^\d{4}-\d{4}$',
+        message='Session must be in the format "YYYY-YYYY"'
+    )
+    exam_name = models.CharField(max_length=100,blank=True, null=True)
+
+    session = models.CharField(
+        max_length=9,
+        blank=True,
+        null=True,
+        validators=[session_validator]
+    )
+    
+    result = models.URLField(blank=True, null=True)
+    admit_card = models.URLField(blank=True, null=True)
+        
+    
