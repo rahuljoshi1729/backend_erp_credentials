@@ -74,3 +74,21 @@ class givingexamadmitresultdataserializer(serializers.ModelSerializer):
     class Meta:
         model = ExamDataAdmitResult
         fields = ['user_id','exam_name','session','result','admit_card','date']  
+        
+        
+class eventdataserializer(serializers.ModelSerializer):
+    class Meta:
+        model = eventsdata
+        fields = '__all__'        
+        
+        
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UploadedImage
+        fields = ['image_url']   
+        
+        
+class timetableserializer(serializers.ModelSerializer):
+    class Meta:
+        model = timetabledata
+        fields = '__all__'             

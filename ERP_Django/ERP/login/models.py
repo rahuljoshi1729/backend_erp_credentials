@@ -177,4 +177,20 @@ class ExamDataAdmitResult(models.Model):
     result = models.URLField(blank=True, null=True)
     admit_card = models.URLField(blank=True, null=True)
         
+        
+#Table to store event details 
+class eventsdata(models.Model):
+    event_name=models.CharField(max_length=100)
+    date=models.DateField(blank=True,null=True)
+    poster=models.URLField(blank=True,null=True) 
+      
+class UploadedImage(models.Model):
+    image_url = models.URLField()
     
+    
+class timetabledata(models.Model):
+    year=models.IntegerField()
+    branch=models.CharField(max_length=100)
+    section=models.CharField(max_length=100)
+    time_table_url = models.URLField(blank=True,null=True)
+        

@@ -17,6 +17,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# importing cloudinary files
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'login',
     'corsheaders',
+    'cloudinary',
 ]
 
 CORS_ALLOWED_ORIGIN_ALL = True
@@ -161,4 +167,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '9271rsily@gmail.com'
 EMAIL_HOST_PASSWORD = 'fqbqovclvzgagkvf'
 
+
+
+# adding cloudinary config
+cloudinary.config( 
+  cloud_name = "dapm2rvsd", 
+  api_key = "514735227555362", 
+  api_secret = "EwEGQ2z2lxVp36xwXwm6ukGQFp4" 
+)
 

@@ -433,7 +433,6 @@ used_tokens = {}
 class PasswordReset(APIView):
             def patch(self, request):
                 token=request.headers.get('token')
-                print(request.data)
                 token = request.data.get('data', {}).get('token')
                 print(token)
                 if token is None:
@@ -692,3 +691,100 @@ def get_examdata(request):
     
     else:
         return Response({'error': 'token not found','status':403}, status=403)
+    
+    
+    
+class eventpostview(APIView):
+    def post(self,request):
+        jwt_token=request.data.get('data', {}).get('token')
+        jwt_token = request.COOKIES.get('jwt_token')    
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='student':
+                data=request.data
+                serializers=eventdataserializer(data=data)
+                if serializers.is_valid():
+                    serializers.save()
+                    return Response({
+                        'status': 201,
+                        'message': 'Data created',
+                        'data': serializers.data,
+                    })
+                else:
+                    return Response({
+                        'status': 400,
+                        'message': 'input data',
+                        'data': serializers.errors,
+                    })     
+            else:
+                return Response({'error': 'Access not allowed','status':405}, status=405)        
+        else:
+            return Response({'error': 'token not found','status':403}, status=403)    
+    
+    
+class geteventdataview(APIView):
+    def get(self,request):
+        event_data=eventsdata.objects.all()
+        serializers=eventdataserializer(event_data,many=True)
+        if not serializers.data:
+            return Response({'error': 'No data found','status':204}, status=204)
+        return Response({"event_data":serializers.data,"status":201},status=201)
+    
+import cloudinary.uploader 
+from rest_framework import status
+#Example api for how storing data in cloudinary works
+""" class ImageUploadView(APIView):
+    def post(self, request, *args, **kwargs):
+        image = request.data.get('image')
+
+        # Upload the image to Cloudinary
+        result = cloudinary.uploader.upload(image)
+
+        # Save the Cloudinary URL to the database
+        uploaded_image = UploadedImage.objects.create(image_url=result['secure_url'])
+
+        serializer = ImageSerializer(uploaded_image)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)  """
+    
+    
+#uploading timetable    
+class timetableuploader(APIView):
+    def post(self,request):
+        jwt_token=request.data.get('data', {}).get('token')
+        jwt_token = request.COOKIES.get('jwt_token')    
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='student':
+                serializers=timetableserializer(data=request.data)
+                if serializers.is_valid():
+                    image_data = request.data.get('image')
+                    cloudinary_response = cloudinary.uploader.upload(image_data)
+                    serializers.validated_data['time_table_url'] = cloudinary_response['url']
+                    serializers.save()
+                    return Response({
+                        'status': 201,
+                        'message': 'Data created',
+                        'data': serializers.data,
+                    })
+                else:
+                    return Response({
+                        'status': 400,
+                        'message': 'input data',
+                        'data': serializers.errors,
+                    })
+            else:
+                return Response({'error': 'image not found','status':403}, status=403)    
+                
+class gettimetable(APIView):
+    def get(self,request):
+        timetable_data=timetabledata.objects.all()
+        serializers=timetableserializer(timetable_data,many=True)
+        if not serializers.data:
+            return Response({'error': 'No data found','status':204}, status=204)
+        return Response({"timetable_data":serializers.data,"status":201},status=201)   
+               
