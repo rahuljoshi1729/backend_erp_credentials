@@ -433,6 +433,7 @@ used_tokens = {}
 class PasswordReset(APIView):
             def patch(self, request):
                 token=request.headers.get('token')
+                print(request.data)
                 token = request.data.get('data', {}).get('token')
                 print(token)
                 if token is None:
