@@ -100,3 +100,5 @@ def getdatafromjwt(request):
             return Response({'error': 'Token expired'}, status=401)
     else:
         return Response({'error': 'Invalid token'}, status=401)
+
+

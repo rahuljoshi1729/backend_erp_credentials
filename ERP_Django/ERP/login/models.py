@@ -166,7 +166,7 @@ class ExamDataAdmitResult(models.Model):
         message='Session must be in the format "YYYY-YYYY"'
     )
     exam_name = models.CharField(max_length=100,blank=True, null=True)
-
+    date = models.DateField(blank=True, null=True) 
     session = models.CharField(
         max_length=9,
         blank=True,

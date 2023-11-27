@@ -652,9 +652,22 @@ def Attendanceview(request):
 
 @api_view(['GET'])
 def get_examdata(request):
+    user_id='2210085194'
     exam_data = exam.objects.all()
     serializer = givingexamdataserializer(exam_data, many=True)
-    return Response(serializer.data)
+    extracted_data = []
+    for data in serializer.data:
+        date=data['date']
+        print(date)
+        exam_result_admit_data = ExamDataAdmitResult.objects.filter(date=date,user_id=user_id)
+        if exam_result_admit_data.exists():
+            serializer1 = givingexamadmitresultdataserializer(exam_result_admit_data, many=True)
+            extracted_data.append(serializer1.data)
+        print(serializer1.data)
+        
+        
+    return Response({"exam_data":serializer.data,
+                     "admit_card_result_data":extracted_data})
     
     
     

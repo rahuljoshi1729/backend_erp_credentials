@@ -60,7 +60,7 @@ class exameditorserializer(serializers.ModelSerializer):
 class ExamDataAdmitResultserializer(serializers.ModelSerializer):
     class Meta:
         model=ExamDataAdmitResult
-        fields=['user_id','exam_name','session','result','admit_card']
+        fields=['user_id','exam_name','session','result','admit_card','date']
         
         
 #serializer for giving exam data     
@@ -72,5 +72,5 @@ class givingexamdataserializer(serializers.ModelSerializer):
         
 class givingexamadmitresultdataserializer(serializers.ModelSerializer):
     class Meta:
-        model = exam
-        fields = '__all__'   
+        model = ExamDataAdmitResult
+        fields = ['user_id','exam_name','session','result','admit_card','date']  
