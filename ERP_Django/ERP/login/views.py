@@ -304,7 +304,7 @@ class examdataadmitresulteditiorview(APIView):
         
              
 #API FOR LOGIN OF USER       
-class register(APIView):
+class login(APIView):
     def post(self,request):
         try:
             data=request.data
@@ -320,7 +320,7 @@ class register(APIView):
                 if not student:
                     faculty = Faculty.objects.filter(user_id=user_id).first()
                     if not faculty:
-                        return JsonResponse({'error': 'User not found','status':404}, status=404)
+                        return JsonResponse({'error': 'Invalid credentials','status':404}, status=404)
                     user = faculty
                 else:
                     user = student
@@ -328,7 +328,7 @@ class register(APIView):
                 if user.password == password:
                     email=user.email
                     send_otp_via_email(email,user_id,password)
-                    return HttpResponse({'message': 'OTP sent to email','status':201},status=201)
+                    return JsonResponse({'message': 'OTP sent to email','status':201},status=201)
 
                 else:
                     return JsonResponse({'error': 'Invalid credentials','status':401}, status=401)    
@@ -367,7 +367,7 @@ class VerifyOTP(APIView):
                     if not student:
                         faculty = Faculty.objects.filter(email=email).first()
                         if not faculty:
-                            return JsonResponse({'error': 'User not found','status':404})
+                            return JsonResponse({'error': 'invalid','status':404})
                         user_ = faculty
                     else:
                         user_ = student
@@ -408,7 +408,7 @@ class PasswordResetRequest(APIView):
                 faculty_user = Faculty.objects.filter(email=email).first()
 
                 if not student_user and not faculty_user:
-                    return JsonResponse({'error': 'User not found: unauthorized email','status':404}, status=404)
+                    return JsonResponse({'error': ' unauthorized email','status':404}, status=404)
 
                 # Assuming you have a function to send password reset mail
                 print(email)
@@ -664,23 +664,30 @@ def Attendanceview(request):
     else:
             return JsonResponse({'error': 'Invalid token','status':401}, status=401)      
 
+
+#API to get data of exam related to a particular user
 @api_view(['GET'])
 def get_examdata(request):
-    user_id='2210085194'
-    exam_data = exam.objects.all()
-    serializer = givingexamdataserializer(exam_data, many=True)
-    extracted_data = []
-    for data in serializer.data:
-        date=data['date']
-        print(date)
-        exam_result_admit_data = ExamDataAdmitResult.objects.filter(date=date,user_id=user_id)
-        if exam_result_admit_data.exists():
-            serializer1 = givingexamadmitresultdataserializer(exam_result_admit_data, many=True)
-            extracted_data.append(serializer1.data)
-        print(serializer1.data)
-        
-        
-    return Response({"exam_data":serializer.data,
-                     "admit_card_result_data":extracted_data})
+    jwt_token = request.data.get('data', {}).get('token')
+   # jwt_token = request.COOKIES.get('jwt_token')
+    if jwt_token:
+        user_id, role = decode_jwt_token(jwt_token)
+        if user_id is None:
+            return Response({'error': 'Invalid token','status':401}, status=401)
+        exam_data = exam.objects.all()
+        serializer = givingexamdataserializer(exam_data, many=True)
+        extracted_data = []
+        for data in serializer.data:
+            date=data['date']
+            print(date)
+            exam_result_admit_data = ExamDataAdmitResult.objects.filter(date=date,user_id=user_id)
+            if exam_result_admit_data.exists():
+                serializer1 = givingexamadmitresultdataserializer(exam_result_admit_data, many=True)
+                extracted_data.append(serializer1.data)
+            print(serializer1.data)
+        return Response({"exam_data":serializer.data,
+                    "admit_card_result_data":extracted_data,
+                    "status":201},status=201)
     
-    
+    else:
+        return Response({'error': 'token not found','status':403}, status=403)
