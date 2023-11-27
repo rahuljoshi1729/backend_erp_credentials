@@ -478,9 +478,10 @@ from django.views.decorators.csrf import csrf_exempt
 import jwt
 from rest_framework.decorators import api_view
 
-""" @api_view(['POST'])
+"""@api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
+    print(request.headers)
     jwt_token = request.COOKIES.get('jwt_token')
     print(jwt_token)
     if jwt_token:
@@ -568,8 +569,12 @@ def Attendanceview(request):
 @api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
+    print(request.headers)
+    print(request.META)
+    print(request.headers.get('Authorization'))
     jwt_token = request.headers.get('token')
     print(jwt_token)
+    print(request.data)
     if jwt_token:
             try:
         
@@ -648,7 +653,7 @@ def Attendanceview(request):
             except jwt.ExpiredSignatureError:  
                 return JsonResponse({'error': 'Token expired','status':401}, status=401)
     else:
-            return JsonResponse({'error': 'Invalid token','status':401}, status=401)             
+            return JsonResponse({'error': 'Invalid token','status':401}, status=401)      
 
 @api_view(['GET'])
 def get_examdata(request):
