@@ -14,6 +14,6 @@ urlpatterns = [
     path('examdata/',get_examdata,name='exam_data'),
     path("verifyotp/",VerifyOTP.as_view(),name="verifyotp"),
     path("passwordreset/",PasswordResetRequest.as_view(),name="passwordresetrequest"),
-    path("password/reset/<str:token>/",PasswordReset.as_view(),name="passwordreset"),
+    path("password/reset/",PasswordReset.as_view(),name="passwordreset"),
     path("attendance/",Attendanceview,name="attendance"),]
     
