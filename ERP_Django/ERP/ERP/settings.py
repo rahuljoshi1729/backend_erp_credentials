@@ -53,7 +53,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     'http://localhost:5173',
     'https://erp-backend-mqly.onrender.com',
-    'https://656457f11931391662a748e5--superb-travesseiro-0c71a1.netlify.app/',
+    'https://656457f11931391662a748e5--superb-travesseiro-0c71a1.netlify.app',
     
 ]
 
