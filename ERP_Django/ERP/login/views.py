@@ -44,7 +44,7 @@ class studentdataeditor(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'faculty':
+                if role == 'student':
                     data = request.data
                     serializers = dataeditorserializer(data=data)
 
@@ -83,7 +83,7 @@ class facultyeditor(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'admin':
+                if role == 'student':
                     data = request.data
                     serializers = facultyeditorserializer(data=data)
 
@@ -121,7 +121,7 @@ class subjecteditor(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'faculty':
+                if role == 'student':
                     data = request.data
                     serializers = subjecteditorserializer(data=data)
 
@@ -159,7 +159,7 @@ class attendanceeditor(APIView):
                 user_id, role = decode_jwt_token(jwt_token)
                 # print(user_id, role)
                 
-                if role == 'faculty':
+                if role == 'student':
                     data = request.data
                     serializers = attendenceeditorserializer(data=data)
 
@@ -432,8 +432,8 @@ used_tokens = {}
 #token is sent in url and new password is taken from user        
 class PasswordReset(APIView):
             def post(self, request):
-                print(request.token) 
                 token=request.headers.get('token')
+                token = request.data.get('data', {}).get('token')
                 
                 if token is None:
                     return JsonResponse({'error': 'token is required','status':400}, status=400)      # Handle the case where 'email' is not provided
@@ -569,14 +569,18 @@ def Attendanceview(request):
 @api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
-    print(request.headers)
-    print(request.META)
+    #print(request.headers)
+    #print(request.META)
     print(request.headers.get('Authorization'))
     jwt_token = request.headers.get('token')
-    print(jwt_token)
     print(request.data)
+
     jwt_token = request.data.get('data', {}).get('token')
     print(jwt_token)
+    
+    
+    #jwt_token = request.headers.get('token')
+    #jwt_token = request.COOKIES.get('jwt_token')
     if jwt_token:
             try:
         
@@ -594,11 +598,14 @@ def Attendanceview(request):
                 for a in subjectuserlist:
                     subcodedic[a.code]=a.name
                 print(subcodedic)
+                print(semester,section)
                 #now getting the faculty who is taking that subject
                 subfaculdic={}
                 for key in subcodedic:
+                    print(key)
                     classassigneduser=classassigned.objects.get(subject_code=key,class_assigned=section,semester=semester)
                     facultyuser=Faculty.objects.get(user_id=classassigneduser.faculty)
+                    print(facultyuser)
                     if classassigneduser:
                         faculty=classassigneduser.faculty
                         subfaculdic[key]=facultyuser.first_name+" "+facultyuser.last_name
@@ -677,5 +684,3 @@ def get_examdata(request):
                      "admit_card_result_data":extracted_data})
     
     
-    
-  
