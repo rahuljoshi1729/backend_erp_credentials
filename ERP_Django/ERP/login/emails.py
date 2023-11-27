@@ -101,4 +101,4 @@ def getdatafromjwt(request):
     else:
         return Response({'error': 'Invalid token'}, status=401)
 
-
+token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvaGl0MjIxNTQwMzBAYWtnZWMuYWMuaW4iLCJleHAiOjE3MDExNjM4NzJ9.KeG0mk-NG9IbxiA9KnN-0qKUqUfVLbQ6eCbpChatdbk'

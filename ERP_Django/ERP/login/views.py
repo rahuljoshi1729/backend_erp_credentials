@@ -575,6 +575,8 @@ def Attendanceview(request):
     jwt_token = request.headers.get('token')
     print(jwt_token)
     print(request.data)
+    jwt_token = request.data.get('data', {}).get('token')
+    print(jwt_token)
     if jwt_token:
             try:
         
