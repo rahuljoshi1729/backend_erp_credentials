@@ -407,15 +407,17 @@ class PasswordResetRequest(APIView):
                 student_user = Student.objects.filter(email=email).first()
                 faculty_user = Faculty.objects.filter(email=email).first()
 
-                if not student_user and not faculty_user:
-                    return JsonResponse({'error': ' unauthorized email','status':404}, status=404)
-
+                if not student_user :
+                    if not faculty_user:
+                        return JsonResponse({'error': 'Unauthrized email','status':404}, status=404)
+                    user = 'faculty'
+                user='student'
                 # Assuming you have a function to send password reset mail
                 print(email)
                 token=send_passwordreset_mail(email)
 
                 return JsonResponse({'message': 'Password reset link sent to email',
-                                     'token':token,'status':201},status=201)
+                                     'token':token,'role':user,'status':201},status=201)
 
             return JsonResponse({'error': 'Invalid data','status':400}, status=400)
 
