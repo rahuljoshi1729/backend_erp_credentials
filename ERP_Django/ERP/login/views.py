@@ -432,8 +432,9 @@ used_tokens = {}
 #token is sent in url and new password is taken from user        
 class PasswordReset(APIView):
             def patch(self, request):
-                #token=request.headers.get('token')
-                token = request.data.get('token')
+                token=request.headers.get('token')
+                print(request.data)
+                token = request.data.get('data', {}).get('token')
                 print(token)
                 if token is None:
                     return JsonResponse({'error': 'token is required','status':400}, status=400)      # Handle the case where 'email' is not provided
