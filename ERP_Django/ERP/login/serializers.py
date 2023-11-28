@@ -44,7 +44,7 @@ class attendenceeditorserializer(serializers.ModelSerializer):
 class facultyeditorserializer(serializers.ModelSerializer):
     class Meta:
         model=Faculty
-        fields=['user_id','first_name','last_name','email','phone_number','role','Post','Department','password','aadhar','address','gender']   
+        fields=['user_id','first_name','last_name','email','phone_number','role','Post','Department','password','aadhar','address','gender','profile_photo_url']   
 
 class classassignserializer(serializers.ModelSerializer):
     class Meta:

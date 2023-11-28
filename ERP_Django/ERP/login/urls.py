@@ -22,5 +22,6 @@ urlpatterns = [
     path("uploadtimetable/",timetableuploader.as_view(),name="timetable"),
     path("gettimetable/",gettimetable.as_view(),name="gettimetable"),
     path("changepassword/",changepassword.as_view(),name="changepassword"),
-    path("feedbackform/",feedbackformview.as_view(),name="feedbackform"),]
+    path("feedbackform/",feedbackformview.as_view(),name="feedbackform"),
+    path("getfaculty/",getfacultydata.as_view(),name="gettfaculty"),]
     

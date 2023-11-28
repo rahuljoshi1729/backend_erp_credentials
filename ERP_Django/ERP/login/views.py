@@ -929,5 +929,11 @@ class feedbackformview(APIView):
             return Response({'error': str(e),'status':500}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
         
         
-        
-        
+# API to get data of faculty
+class getfacultydata(APIView):
+    def get(self,request):
+        faculty_data=Faculty.objects.all()
+        serializers=facultyeditorserializer(faculty_data,many=True)
+        if not serializers.data:
+            return Response({'error': 'No data found','status':204}, status=204)
+        return Response({"faculty_data":serializers.data,"status":201},status=201)
