@@ -20,7 +20,7 @@ class dataeditorserializer(serializers.ModelSerializer):
     
 class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.IntegerField()
-    email = serializers.EmailField()
+    user_id = serializers.IntegerField()
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()    

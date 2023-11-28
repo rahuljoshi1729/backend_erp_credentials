@@ -356,16 +356,16 @@ class VerifyOTP(APIView):
             serializers=VerifyOTPSerializer(data=data)
             if serializers.is_valid():
                 otp=serializers.validated_data['otp']
-                email=serializers.validated_data['email']
+                user_id=serializers.validated_data['user_id']
                 #checking in loginuser model
                 user=LoginUser.objects.filter(otp=otp).first()
                 
                 if user:
                     
                     #fetching user_id form student/Faculty model
-                    student = Student.objects.filter(email=email).first()
+                    student = Student.objects.filter(user_id=user_id).first()
                     if not student:
-                        faculty = Faculty.objects.filter(email=email).first()
+                        faculty = Faculty.objects.filter(user_id=user_id).first()
                         if not faculty:
                             return JsonResponse({'error': 'invalid','status':404})
                         user_ = faculty
@@ -932,8 +932,26 @@ class feedbackformview(APIView):
 # API to get data of faculty
 class getfacultydata(APIView):
     def get(self,request):
-        faculty_data=Faculty.objects.all()
-        serializers=facultyeditorserializer(faculty_data,many=True)
-        if not serializers.data:
-            return Response({'error': 'No data found','status':204}, status=204)
-        return Response({"faculty_data":serializers.data,"status":201},status=201)
+        jwt_token=request.data.get('data', {}).get('token')
+        jwt_token =request.data.get('token')
+        jwt_token = request.COOKIES.get('jwt_token')  
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            print(user_id)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='faculty':
+                faculty_data=Faculty.objects.get(user_id=user_id)
+                serializers=facultyeditorserializer(faculty_data)
+                print(serializers.data)
+                if not serializers.data:
+                    return Response({'error': 'No data found','status':204}, status=204)
+                return Response({"faculty_data":serializers.data,"status":201},status=201)
+            else:
+                return Response({'error': 'Access not allowed','status':405}, status=405)
+            
+        else:
+            return Response({'error': 'token not found','status':403}, status=403)
+            
+        
+       
