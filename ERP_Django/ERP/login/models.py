@@ -193,4 +193,16 @@ class timetabledata(models.Model):
     branch=models.CharField(max_length=100)
     section=models.CharField(max_length=100)
     time_table_url = models.URLField(blank=True,null=True)
-        
+    
+    
+class feedbacktable(models.Model):
+    student_id=models.ForeignKey(Student,on_delete=models.CASCADE,related_name='feedback')
+    faculty_name=models.CharField(max_length=100)
+    semester=models.IntegerField()
+    section=models.CharField(max_length=100)
+    subject_code=models.ForeignKey(Subjects,on_delete=models.CASCADE,related_name='feedback')
+    question1=models.IntegerField()
+    question2=models.IntegerField()
+    question3=models.IntegerField()
+    question4=models.IntegerField()
+    question5=models.IntegerField()    

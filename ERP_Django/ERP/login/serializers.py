@@ -92,3 +92,11 @@ class timetableserializer(serializers.ModelSerializer):
     class Meta:
         model = timetabledata
         fields = '__all__'             
+        
+     
+     
+# Serializers for feedback form
+class feedbackserializer(serializers.ModelSerializer):
+    class Meta:
+        model = feedbacktable
+        fields = '__all__'

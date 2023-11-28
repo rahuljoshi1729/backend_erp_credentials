@@ -840,4 +840,94 @@ class changepassword(APIView):
             else:
                 return Response({'error': 'Access not allowed','status':405}, status=405)        
         else:
-            return Response({'error': 'token not found','status':403}, status=403)                              
+            return Response({'error': 'token not found','status':403}, status=403)              
+        
+    
+    
+#API for feedback form 
+class feedbackformview(APIView):
+    def get(self,request,*args,**kwargs):
+        jwt_token=request.data.get('data', {}).get('token')
+        jwt_token =request.data.get('token')
+        #jwt_token = request.COOKIES.get('jwt_token')  
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='student':
+                user=Student.objects.get(user_id=user_id)
+                semester=user.semester
+                year=user.Year
+                section=user.section
+                global user_data,subject_data
+                #creating student data
+                user_data={
+                    'user_id':user_id,
+                    'semester':semester,
+                    'section':section,
+                    
+                }
+                
+                # now getting subject assigned to that student
+                subjectuser=Subjects.objects.filter(semester=semester)
+                if subjectuser==None:
+                    return Response({'error': 'No subject data found','status':204}, status=204)
+                subject_data = [{'subject_code': subject.code, 'sub_name': subject.name} for subject in subjectuser]
+                #print(subject_data)
+                
+                for a in subject_data:
+                    subassign={}
+                    code=a['subject_code']
+                    classassigneduser=classassigned.objects.get(subject_code=a['subject_code'],class_assigned=section,semester=semester)
+                    facultyuser=Faculty.objects.get(user_id=classassigneduser.faculty)
+                    if facultyuser==None:
+                        faculty_name="Not Assigned"
+                    faculty_name=facultyuser.first_name+" "+facultyuser.last_name
+                    a["faculty"]=faculty_name
+                
+                
+                return Response({"user_data":user_data,
+                                 "subject_data":subject_data,
+                                 "status":201},status=201)  
+        else:
+            return Response({'error': 'token not found','status':403}, status=403)
+    def post(self,request,*args,**kwargs):
+        try:
+            #extracting data from request        
+            feedback_data=request.data.get('feedback',[]) 
+            
+            # Validate that feedback_data is a list of dictionaries
+            if not isinstance(feedback_data, list):
+                return Response({'error': 'Invalid feedback data format','status':400}, status=status.HTTP_400_BAD_REQUEST)    
+            
+             # Validate that feedback_data contains feedback for at least one subject
+            if not feedback_data:
+                return Response({'error': 'Feedback for at least one subject is required','status':400}, status=status.HTTP_400_BAD_REQUEST)
+            
+            feedback_instances=[]
+            for subject_feedback in feedback_data:
+                subject_code=subject_feedback.get('subject_code')
+                
+                faculty_name = subject_feedback.get('faculty_name')
+                
+                feedback_instance=feedbacktable(
+                    student_id=user_data['user_id'],
+                    faculty_name=faculty_name,
+                    year=user_data['semester'],
+                    section=user_data['section'],
+                    question1=subject_feedback['question_1'],
+                    question2=subject_feedback['question_2'],
+                    question3=subject_feedback['question_3'],
+                    question4=subject_feedback['question_4'],
+                    question5=subject_feedback['question_5'],   
+                )
+                feedback_instances.append(feedback_instance)
+            feedbacktable.objects.bulk_create(feedback_instances) 
+            return Response({'message': 'Feedback submitted successfully','status':201}, status=status.HTTP_201_CREATED)   
+        
+        except Exception as e:
+            return Response({'error': str(e),'status':500}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
+        
+        
+        
+        
