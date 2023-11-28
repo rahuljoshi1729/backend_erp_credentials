@@ -934,7 +934,7 @@ class getfacultydata(APIView):
     def get(self,request):
         jwt_token=request.data.get('data', {}).get('token')
         jwt_token =request.data.get('token')
-        jwt_token = request.COOKIES.get('jwt_token')  
+        #jwt_token = request.COOKIES.get('jwt_token')  
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             print(user_id)
