@@ -379,7 +379,7 @@ class VerifyOTP(APIView):
                     user.delete()
 
                     #cokkie setting
-                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token,'status':201})
+                    response = JsonResponse({'user_id': user_id, 'otp_sent': True, 'token': token,'role':role,'status':201})
                     response.set_cookie('jwt_token', token, httponly=True, secure=True)  # Use secure=True in production with HTTPS
                     return response
                 else:
