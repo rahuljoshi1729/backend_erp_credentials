@@ -788,3 +788,53 @@ class gettimetable(APIView):
             return Response({'error': 'No data found','status':204}, status=204)
         return Response({"timetable_data":serializers.data,"status":201},status=201)   
                
+               
+class changepassword(APIView):
+    def patch(self,request):
+        jwt_token=request.data.get('data', {}).get('token')
+       # jwt_token = request.COOKIES.get('jwt_token')    
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='student':
+               # user=Student.objects.filter(user_id=user_id)
+                #old_password=user.password
+                data=request.data
+                serializers=PasswordtakingSerializer(data=data)
+                if serializers.is_valid():
+                    new_password=serializers.validated_data.get('password')
+                    confirm_password=serializers.validated_data.get('confirm_password')
+                    student=Student.objects.get(user_id=user_id)
+                    print(student.password,new_password,confirm_password)
+                    if student.password!=new_password:
+                        if new_password==confirm_password:
+                            student.password=new_password
+                            student.save()
+                            return Response({
+                                'status': 201,
+                                'message': 'Password changed successfully',
+                                'data': serializers.data,
+                            })
+                        else:
+                            return Response({
+                                'status': 400,
+                                'message': 'new password and confirm password not matched',
+                                'data': serializers.errors,
+                            })    
+                    else:
+                        return Response({
+                            'status': 400,
+                            'message': 'invalid',
+                            'data': serializers.errors,
+                        })    
+                else:
+                    return Response({
+                        'status': 400,
+                        'message': 'input data',
+                        'data': serializers.errors,
+                    })     
+            else:
+                return Response({'error': 'Access not allowed','status':405}, status=405)        
+        else:
+            return Response({'error': 'token not found','status':403}, status=403)                              

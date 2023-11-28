@@ -20,5 +20,6 @@ urlpatterns = [
     path("postevent/",eventpostview.as_view(),name="postevent"),
     path("getevent/",geteventdataview.as_view(),name="getevent"),
     path("uploadtimetable/",timetableuploader.as_view(),name="timetable"),
-    path("gettimetable/",gettimetable.as_view(),name="gettimetable"),]
+    path("gettimetable/",gettimetable.as_view(),name="gettimetable"),
+    path("changepassword/",changepassword.as_view(),name="changepassword"),]
     
