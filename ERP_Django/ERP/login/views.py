@@ -594,6 +594,7 @@ def Attendanceview(request):
                 semester=Studentuser.semester
                 section=Studentuser.section
                 name=Studentuser.first_name+" "+Studentuser.last_name
+                profile_url=Studentuser.profile_photo_url
                 #getting data of student
                 subjectuser=Subjects.objects.filter(semester=semester)
                 subjectuserlist=list(subjectuser)
@@ -656,6 +657,7 @@ def Attendanceview(request):
                                  "section":section,
                                 "user_id":user_id,
                                 "role":role,
+                                "profile_url":profile_url,
                                 "total_classes":total_classes,
                                 "present":present,
                                 "absent":total_classes-present,
@@ -762,7 +764,7 @@ class timetableuploader(APIView):
             user_id, role = decode_jwt_token(jwt_token)
             if user_id is None:
                 return Response({'error': 'Invalid token','status':401}, status=401)
-            if role=='student':
+            if role=='faculty':
                 serializers=timetableserializer(data=request.data)
                 if serializers.is_valid():
                     image_data = request.data.get('image')
@@ -781,7 +783,7 @@ class timetableuploader(APIView):
                         'data': serializers.errors,
                     })
             else:
-                return Response({'error': 'image not found','status':403}, status=403)    
+                return Response({'error': 'no access','status':403}, status=403)    
                 
 class gettimetable(APIView):
     def get(self,request):
@@ -934,7 +936,7 @@ class getfacultydata(APIView):
     def get(self,request):
         jwt_token=request.data.get('data', {}).get('token')
         jwt_token =request.data.get('token')
-        #jwt_token = request.COOKIES.get('jwt_token')  
+        jwt_token = request.COOKIES.get('jwt_token')  
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             print(user_id)
