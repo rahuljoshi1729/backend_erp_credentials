@@ -578,7 +578,7 @@ def Attendanceview(request):
     jwt_token = request.headers.get('token')
     print(request.data)
 
-    jwt_token = request.data.get('data', {}).get('token')
+    #jwt_token = request.data.get('data', {}).get('token')
     print(jwt_token)
     
     
@@ -957,4 +957,7 @@ class getfacultydata(APIView):
             return Response({'error': 'token not found','status':403}, status=403)
             
         
+"""         
+class facultyattendance(APIView):
+    def get(self,request)         """
        
