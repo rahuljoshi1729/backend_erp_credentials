@@ -574,12 +574,12 @@ from django.views.decorators.http import require_http_methods
 @require_http_methods(["GET", "POST", "OPTIONS"])
 def Attendanceview(request):
     print(request.headers)
-    a=request.headers
     #print(request.META)
     print(request.headers.get('token'))
     print(request.headers.get('Authorization'))
     jwt_token = request.headers.get('token')
-    jwt_token = a.get('token')
+    token=request.headers.get('Authorization')
+    jwt_token=token.split('Bearer ')
     #print(request.data)
     print(jwt_token)
 
