@@ -577,7 +577,7 @@ def Attendanceview(request):
     print(request.META)
     print(request.headers.get('Authorization'))
     jwt_token = request.headers.get('token')
-    jwt_token = a.get('headers', {}).get('token', '').split('Bearer ')[1]
+    jwt_token = a.get('headers', {}).get('token', '')
     print(request.data)
 
     #jwt_token = request.data.get('data', {}).get('token')
