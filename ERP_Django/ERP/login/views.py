@@ -569,8 +569,9 @@ def Attendanceview(request):
             
             
             
-@api_view(['GET'])
-@csrf_exempt
+
+from django.views.decorators.http import require_http_methods
+@require_http_methods(["GET", "POST", "OPTIONS"])
 def Attendanceview(request):
     print(request.headers)
     a=request.headers
