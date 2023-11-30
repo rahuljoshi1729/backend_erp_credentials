@@ -573,10 +573,11 @@ def Attendanceview(request):
 @csrf_exempt
 def Attendanceview(request):
     print(request.headers)
+    a=request.headers
     print(request.META)
     print(request.headers.get('Authorization'))
     jwt_token = request.headers.get('token')
-    jwt_token = request.headers.get('token','').split(' ')[0]
+    jwt_token = a.get('headers', {}).get('token', '').split('Bearer ')[1]
     print(request.data)
 
     #jwt_token = request.data.get('data', {}).get('token')
