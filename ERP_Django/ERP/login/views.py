@@ -569,7 +569,7 @@ def Attendanceview(request):
             
             
             
-@api_view(['GET'])
+@api_view(['POST'])
 @csrf_exempt
 def Attendanceview(request):
     print(request.headers)
