@@ -53,9 +53,6 @@ INSTALLED_APPS = [
 
 ROOT_URLCONF = 'ERP.urls'
 
-
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
