@@ -573,11 +573,11 @@ def Attendanceview(request):
 from django.views.decorators.http import require_http_methods
 @require_http_methods(["GET", "POST", "OPTIONS"])
 def Attendanceview(request):
-    print(request.headers)
+    #print(request.headers)
     #print(request.META)
-    print(request.headers.get('token'))
-    print(request.headers.get('Authorization'))
-    jwt_token = request.headers.get('token')
+    #print(request.headers.get('token'))
+    #print(request.headers.get('Authorization'))
+    #jwt_token = request.headers.get('token')
     token=request.headers.get('Authorization')
     jwt_token=token.split('Bearer ')[1]
     #print(request.data)
@@ -678,8 +678,10 @@ def Attendanceview(request):
 #API to get data of exam related to a particular user
 @api_view(['GET'])
 def get_examdata(request):
-    jwt_token = request.data.get('data', {}).get('token')
+    #jwt_token = request.data.get('data', {}).get('token')
    # jwt_token = request.COOKIES.get('jwt_token')
+    token=request.headers.get('Authorization')
+    jwt_token=token.split('Bearer ')[1]
     if jwt_token:
         user_id, role = decode_jwt_token(jwt_token)
         if user_id is None:
@@ -707,7 +709,9 @@ def get_examdata(request):
 class eventpostview(APIView):
     def post(self,request):
         jwt_token=request.data.get('data', {}).get('token')
-        jwt_token = request.COOKIES.get('jwt_token')    
+        jwt_token = request.COOKIES.get('jwt_token')
+        token=request.headers.get('Authorization')
+        jwt_token=token.split('Bearer ')[1]    
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             if user_id is None:
@@ -764,7 +768,9 @@ from rest_framework import status
 class timetableuploader(APIView):
     def post(self,request):
         jwt_token=request.data.get('data', {}).get('token')
-        jwt_token = request.COOKIES.get('jwt_token')    
+        jwt_token = request.COOKIES.get('jwt_token')  
+        token=request.headers.get('Authorization')
+        jwt_token=token.split('Bearer ')[1]  
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             if user_id is None:
@@ -803,7 +809,8 @@ class changepassword(APIView):
     def patch(self,request):
         #jwt_token=request.data.get('data', {}).get('token')
         jwt_token = request.data.get('token')
-       # jwt_token = request.COOKIES.get('jwt_token')    
+       # jwt_token = request.COOKIES.get('jwt_token')
+           
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             if user_id is None:
@@ -857,6 +864,8 @@ class feedbackformview(APIView):
     def get(self,request,*args,**kwargs):
         jwt_token=request.data.get('data', {}).get('token')
         jwt_token =request.data.get('token')
+        token=request.headers.get('Authorization')
+        jwt_token=token.split('Bearer ')[1]
         #jwt_token = request.COOKIES.get('jwt_token')  
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
