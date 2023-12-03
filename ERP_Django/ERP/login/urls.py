@@ -23,5 +23,6 @@ urlpatterns = [
     path("gettimetable/",gettimetable.as_view(),name="gettimetable"),
     path("changepassword/",changepassword.as_view(),name="changepassword"),
     path("feedbackform/",feedbackformview.as_view(),name="feedbackform"),
-    path("getfaculty/",getfacultydata.as_view(),name="gettfaculty"),]
+    path("getfaculty/",getfacultydata.as_view(),name="gettfaculty"),
+    path("getstudent/",getstudentdata.as_view(),name="getstudent"),]
     

@@ -67,7 +67,7 @@ class Student(models.Model):
     USERNAME_FIELD='user_id'
     REQUIRED_FIELDS=[user_id]
 
-    def __str__(self):
+    def __int__(self):
         return self.user_id
     
 class Faculty(models.Model):

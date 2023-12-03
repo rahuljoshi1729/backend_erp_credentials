@@ -100,3 +100,8 @@ class feedbackserializer(serializers.ModelSerializer):
     class Meta:
         model = feedbacktable
         fields = '__all__'
+        
+class getstudentdataserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'        

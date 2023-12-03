@@ -975,7 +975,25 @@ class getfacultydata(APIView):
             return Response({'error': 'token not found','status':403}, status=403)
             
         
-"""         
-class facultyattendance(APIView):
-    def get(self,request)         """
-       
+class getstudentdata(APIView):
+    def get(self,request):
+        token=request.headers.get('Authorization')
+        #jwt_token=token.split('Bearer ')[1]
+        jwt_token = request.COOKIES.get('jwt_token') 
+        if jwt_token:
+            user_id, role = decode_jwt_token(jwt_token)
+            print(user_id,role)
+            if user_id is None:
+                return Response({'error': 'Invalid token','status':401}, status=401)
+            if role=='student':
+                s_data=Student.objects.get(user_id=user_id)
+                serializers=getstudentdataserializer(s_data)
+                if serializers.data:
+                    return Response({"student_data":serializers.data,"status":201},status=201)
+                else:
+                    return Response({'error': 'No data found','status':204}, status=204)
+            else:
+                return Response({'error': 'Access not allowed','status':405}, status=405)
+        else:
+            return Response({'error': 'token not found','status':403}, status=403)        
+        
