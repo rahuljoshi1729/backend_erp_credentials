@@ -358,7 +358,7 @@ class VerifyOTP(APIView):
                 otp=serializers.validated_data['otp']
                 user_id=serializers.validated_data['user_id']
                 #checking in loginuser model
-                user=LoginUser.objects.filter(otp=otp).first()
+                user=LoginUser.objects.filter(otp=otp,user_id=user_id).first()
                 
                 if user:
                     
