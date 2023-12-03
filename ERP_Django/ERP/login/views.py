@@ -696,7 +696,7 @@ def get_examdata(request):
             if exam_result_admit_data.exists():
                 serializer1 = givingexamadmitresultdataserializer(exam_result_admit_data, many=True)
                 extracted_data.append(serializer1.data)
-            print(serializer1.data)
+           # print(serializer1.data)
         return Response({"exam_data":serializer.data,
                     "admit_card_result_data":extracted_data,
                     "status":201},status=201)
