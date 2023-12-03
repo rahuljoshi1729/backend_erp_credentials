@@ -978,8 +978,8 @@ class getfacultydata(APIView):
 class getstudentdata(APIView):
     def get(self,request):
         token=request.headers.get('Authorization')
-        #jwt_token=token.split('Bearer ')[1]
-        jwt_token = request.COOKIES.get('jwt_token') 
+        jwt_token=token.split('Bearer ')[1]
+        #jwt_token = request.COOKIES.get('jwt_token') 
         if jwt_token:
             user_id, role = decode_jwt_token(jwt_token)
             print(user_id,role)
