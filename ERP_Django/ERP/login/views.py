@@ -679,9 +679,9 @@ def Attendanceview(request):
 @api_view(['GET'])
 def get_examdata(request):
     #jwt_token = request.data.get('data', {}).get('token')
-   # jwt_token = request.COOKIES.get('jwt_token')
-    token=request.headers.get('Authorization')
-    jwt_token=token.split('Bearer ')[1]
+    jwt_token = request.COOKIES.get('jwt_token')
+    """ token=request.headers.get('Authorization')
+    jwt_token=token.split('Bearer ')[1] """
     if jwt_token:
         user_id, role = decode_jwt_token(jwt_token)
         if user_id is None:
