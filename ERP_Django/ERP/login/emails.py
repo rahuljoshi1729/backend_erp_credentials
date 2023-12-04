@@ -67,11 +67,6 @@ def decode_jwt_token(token):
         # Invalid token
         return None, None
     
-token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMjE1NDAzMCwicm9sZSI6InN0dWRlbnQiLCJleHAiOjE3MDEwODg2NzB9.izIdilLfox3y8JbRGYRtj7VAQrEuEWerWLj98RF1wTc' 
-user_id,role=decode_jwt_token(token)
-print(user_id,role) 
-  
-
 #for password reset
 def decode_jwt_token_reset(token):
     try:
@@ -100,5 +95,3 @@ def getdatafromjwt(request):
             return Response({'error': 'Token expired'}, status=401)
     else:
         return Response({'error': 'Invalid token'}, status=401)
-
-token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvaGl0MjIxNTQwMzBAYWtnZWMuYWMuaW4iLCJleHAiOjE3MDExNjM4NzJ9.KeG0mk-NG9IbxiA9KnN-0qKUqUfVLbQ6eCbpChatdbk'
