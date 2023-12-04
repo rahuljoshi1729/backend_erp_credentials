@@ -105,3 +105,6 @@ class getstudentdataserializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'        
+        
+#hi
+        
